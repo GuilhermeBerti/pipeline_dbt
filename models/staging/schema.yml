@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_producao_alimentos
+    description: Modelo staging que padroniza nomes e tipos vindos da source raw.producao.
+    columns:
+      - name: produto
+        description: Nome normalizado do alimento.
+        data_tests:
+          - not_null
+          - unique
+      - name: quantidade_kg
+        description: Quantidade produzida em quilos.
+        data_tests:
+          - not_null
+      - name: preco_medio
+        description: Valor medio de venda por quilo.
+        data_tests:
+          - not_null
+      - name: receita_total
+        description: Receita total do produto.
+        data_tests:
+          - not_null
+      - name: margem_lucro
+        description: Receita por quilo menos preco medio.
+        data_tests:
+          - not_null

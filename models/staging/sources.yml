@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Dados carregados pelo ETL Python a partir do CSV producao_alimentos.csv no SQLite.
+    schema: main
+    tables:
+      - name: producao
+        description: Tabela bruta main.producao com linhas filtradas pelo job.py.
+        columns:
+          - name: produto
+            description: Nome do alimento produzido.
+            data_tests:
+              - not_null
+          - name: quantidade
+            description: Quantidade produzida em quilos.
+            data_tests:
+              - not_null
+          - name: preco_medio
+            description: Valor medio de venda por quilo.
+            data_tests:
+              - not_null
+          - name: receita_total
+            description: Receita total tratada pelo ETL.
+            data_tests:
+              - not_null
+          - name: margem_lucro
+            description: Margem bruta calculada no ETL.
+            data_tests:
+              - not_null

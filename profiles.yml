@@ -1,0 +1,11 @@
+alimento_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: sqlite
+      threads: 1
+      database: dsadb
+      schema: main
+      schemas_and_paths:
+        main: ../dsadb.db
+      schema_directory: ..

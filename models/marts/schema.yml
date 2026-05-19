@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: fct_producao_alimentos
+    description: Tabela analitica para responder quais produtos produzem, vendem e rentabilizam mais.
+    columns:
+      - name: produto
+        description: Nome do alimento.
+        data_tests:
+          - not_null
+          - unique
+      - name: quantidade_kg
+        description: Quantidade produzida em quilos.
+        data_tests:
+          - not_null
+      - name: receita_total
+        description: Receita total obtida por produto.
+        data_tests:
+          - not_null
+      - name: receita_por_kg
+        description: Receita media por quilo.
+        data_tests:
+          - not_null
+      - name: faixa_producao
+        description: Classificacao baixa, media ou alta por volume produzido.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['baixa', 'media', 'alta']
+      - name: faixa_margem
+        description: Classificacao da margem bruta.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['baixa_margem', 'media_margem', 'alta_margem']
+
+  - name: projecao_receita_alimentos
+    description: Projecoes simples de receita para cenarios de crescimento.
+    columns:
+      - name: produto
+        description: Nome do alimento.
+        data_tests:
+          - not_null
+          - unique
+      - name: receita_projetada_10_pct
+        description: Receita projetada com aumento de 10 por cento sobre a receita atual.
+        data_tests:
+          - not_null
+      - name: receita_projetada_volume_15_pct
+        description: Receita projetada se o volume produzido crescer 15 por cento mantendo receita por kg.
+        data_tests:
+          - not_null
