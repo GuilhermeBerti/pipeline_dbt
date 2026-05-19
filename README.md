@@ -14,14 +14,15 @@
 
 Pipeline de Engenharia de Dados desenvolvido utilizando Python, SQLite e dbt Core para processamento analítico de dados de produção alimentar.
 
-O projeto implementa conceitos modernos de Analytics Engineering com:
+O projeto implementa conceitos modernos de Analytics Engineering, incluindo:
 
-- ETL em Python
-- Camadas staging e marts no dbt
+- ETL com Python
+- Transformações analíticas com dbt
+- Arquitetura em camadas
 - Testes automatizados de qualidade de dados
 - Data lineage
 - Documentação automática
-- Regras de negócio analíticas
+- Regras de negócio
 - Modelagem analítica
 
 ---
@@ -61,7 +62,6 @@ alimento_dbt/
 ├── analyses/
 │
 ├── dbt_project.yml
-├── profiles.yml
 ├── job.py
 ├── producao_alimentos.csv
 └── README.md
@@ -69,16 +69,31 @@ alimento_dbt/
 
 ---
 
-# Fluxo do dbt
+# Fluxo de Dados
 
-## Data Lineage
+## Pipeline Analítico
 
-O pipeline possui dependência entre modelos utilizando:
+```text
+raw.producao
+        ↓
+stg_producao_alimentos
+        ↓
+fct_producao_alimentos
+        ↓
+projecao_receita_alimentos
+```
 
+---
+
+# Data Lineage
+
+![Lineage Graph](images/lineage.png)
+
+O pipeline utiliza:
 - `source()`
 - `ref()`
-
-Implementando rastreabilidade completa das transformações.
+- testes automatizados
+- rastreabilidade completa das transformações
 
 ---
 
@@ -86,7 +101,9 @@ Implementando rastreabilidade completa das transformações.
 
 ## Raw Layer
 
-Tabela original carregada pelo ETL Python:
+Dados brutos carregados pelo ETL Python.
+
+Tabela:
 
 ```sql
 main.producao
@@ -96,7 +113,9 @@ main.producao
 
 ## Staging Layer
 
-Padronização e tipagem dos dados:
+Padronização e limpeza dos dados.
+
+Modelo:
 
 ```sql
 stg_producao_alimentos
@@ -105,36 +124,41 @@ stg_producao_alimentos
 Transformações aplicadas:
 
 - normalização de strings
-- casts numéricos
-- padronização de nomes
+- tipagem numérica
+- limpeza de valores
+- padronização de colunas
 
 ---
 
 ## Mart Layer
 
-Tabela analítica principal:
+Tabela analítica principal.
+
+Modelo:
 
 ```sql
 fct_producao_alimentos
 ```
 
-Métricas calculadas:
+Métricas implementadas:
 
 - receita por kg
-- faixa de produção
-- faixa de margem
+- classificação de produção
+- classificação de margem
 
 ---
 
 ## Analytical Projection Layer
 
-Modelo analítico de projeção:
+Modelo analítico de projeções.
+
+Modelo:
 
 ```sql
 projecao_receita_alimentos
 ```
 
-Cenários implementados:
+Cenários simulados:
 
 - crescimento de receita em 10%
 - crescimento de volume em 15%
@@ -169,16 +193,12 @@ where receita_projetada_10_pct <= receita_total
 
 ---
 
-# DAG do Projeto
+# Resultado dos Testes
 
 ```text
-raw.producao
-        ↓
-stg_producao_alimentos
-        ↓
-fct_producao_alimentos
-        ↓
-projecao_receita_alimentos
+PASS=23
+ERROR=0
+WARN=0
 ```
 
 ---
@@ -239,11 +259,11 @@ dbt docs serve --profiles-dir .
 
 O projeto permite responder perguntas analíticas como:
 
-- Quais alimentos geram maior receita?
+- Quais produtos possuem maior receita?
 - Qual produto possui maior receita por kg?
 - Quais produtos possuem maior margem?
 - Como seria a receita com crescimento de 10%?
-- Como seria a produção com crescimento de volume?
+- Como seria o impacto de crescimento de produção?
 
 ---
 
@@ -255,9 +275,9 @@ O projeto permite responder perguntas analíticas como:
 - Data Quality Tests
 - Analytics Engineering
 - SQL Transformations
+- Regras de Negócio
 - Projeções Analíticas
 - Documentação Automática
-- Camadas staging/marts
 
 ---
 
