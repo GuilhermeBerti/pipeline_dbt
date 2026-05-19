@@ -5,4 +5,4 @@ logs/
 __pycache__/
 .env
 venv/
-*.db-journal
+*.db-journalprofiles.yml 
