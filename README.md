@@ -281,17 +281,6 @@ O projeto permite responder perguntas analíticas como:
 
 ---
 
-# Melhorias Futuras
-
-- CI/CD com GitHub Actions
-- Incremental Models
-- Snapshots
-- Seeds
-- Testes avançados com dbt-expectations
-- Integração com Data Warehouse Cloud
-
----
-
 # Autor
 
 ## Guilherme Berti
