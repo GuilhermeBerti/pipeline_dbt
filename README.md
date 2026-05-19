@@ -1,148 +1,290 @@
-<<<<<<< HEAD
-# Projeto dbt: producao de alimentos com SQLite
+# Pipeline Analítico com dbt + SQLite
 
-Projeto simples de engenharia de dados usando:
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
-- `producao_alimentos.csv` como arquivo de origem.
-- `job.py` como ETL para carregar o CSV no banco SQLite `dsadb.db`.
-- dbt Core com o adapter `dbt-sqlite` para transformar, testar e documentar os dados.
+![dbt](https://img.shields.io/badge/dbt-FF694B?style=for-the-badge&logo=dbt&logoColor=white)
 
-## O que e o dbt Core
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 
-dbt Core e uma ferramenta open source para fazer transformacoes SQL diretamente
-no banco analitico. Ele virou um padrao moderno de ELT porque deixa a camada de
-transformacao modular, versionada, testavel e documentada.
+![SQL](https://img.shields.io/badge/SQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 
-Neste projeto, o fluxo e:
+---
 
-1. O Python faz a extracao e carga: `producao_alimentos.csv` -> `dsadb.db`.
-2. O dbt faz as transformacoes SQL em cima da tabela `main.producao`.
-3. Os testes do dbt validam qualidade dos dados.
-4. O `dbt docs` gera documentacao interativa do pipeline.
+# Sobre o Projeto
 
-## Instalacao e criacao do projeto
+Pipeline de Engenharia de Dados desenvolvido utilizando Python, SQLite e dbt Core para processamento analítico de dados de produção alimentar.
 
-Instale o dbt Core com adapter SQLite:
+O projeto implementa conceitos modernos de Analytics Engineering com:
 
-```powershell
-python -m pip install dbt-sqlite
+- ETL em Python
+- Camadas staging e marts no dbt
+- Testes automatizados de qualidade de dados
+- Data lineage
+- Documentação automática
+- Regras de negócio analíticas
+- Modelagem analítica
+
+---
+
+# Arquitetura do Pipeline
+
+```text
+CSV → Python ETL → SQLite → dbt staging → dbt marts → testes → documentação
 ```
 
-O projeto foi criado via terminal com:
+---
 
-```powershell
-dbt init alimento_dbt --skip-profile-setup
+# Stack Utilizada
+
+- Python
+- SQLite
+- dbt Core
+- SQL
+- Pandas
+- Data Quality Testing
+- Analytics Engineering
+
+---
+
+# Estrutura do Projeto
+
+```text
+alimento_dbt/
+│
+├── models/
+│   ├── staging/
+│   └── marts/
+│
+├── tests/
+├── macros/
+├── snapshots/
+├── analyses/
+│
+├── dbt_project.yml
+├── profiles.yml
+├── job.py
+├── producao_alimentos.csv
+└── README.md
 ```
 
-## Configuracao SQLite com profiles.yml
+---
 
-O arquivo `profiles.yml` aponta para o banco SQLite criado pelo `job.py`:
+# Fluxo do dbt
 
-```yaml
-alimento_dbt:
-  target: dev
-  outputs:
-    dev:
-      type: sqlite
-      threads: 1
-      database: dsadb
-      schema: main
-      schemas_and_paths:
-        main: ../dsadb.db
-      schema_directory: ..
-```
+## Data Lineage
 
-Valide a conexao:
+O pipeline possui dependência entre modelos utilizando:
 
-```powershell
-cd alimento_dbt
-dbt debug --profiles-dir .
-```
+- `source()`
+- `ref()`
 
-## Carga com ETL
+Implementando rastreabilidade completa das transformações.
 
-Na pasta raiz, execute:
+---
 
-```powershell
-python job.py
-```
+# Camadas do Projeto
 
-O job recria a tabela `producao`, le `producao_alimentos.csv`, filtra produtos
-com quantidade maior que 10 e calcula a coluna `margem_lucro`.
+## Raw Layer
 
-## Modelos dbt
-
-Camadas do projeto:
-
-- `models/staging/sources.yml`: declara a origem `main.producao`.
-- `models/staging/stg_producao_alimentos.sql`: padroniza nomes e tipos.
-- `models/marts/fct_producao_alimentos.sql`: cria a tabela analitica.
-- `models/marts/projecao_receita_alimentos.sql`: cria cenarios de projecao.
-
-Exemplos usados:
+Tabela original carregada pelo ETL Python:
 
 ```sql
-from {{ source('raw', 'producao') }}
+main.producao
 ```
+
+---
+
+## Staging Layer
+
+Padronização e tipagem dos dados:
 
 ```sql
-from {{ ref('stg_producao_alimentos') }}
+stg_producao_alimentos
 ```
 
-## Execucao
+Transformações aplicadas:
 
-Rode o pipeline completo a partir da pasta raiz:
+- normalização de strings
+- casts numéricos
+- padronização de nomes
 
-```powershell
-.\scripts\run_pipeline.ps1
+---
+
+## Mart Layer
+
+Tabela analítica principal:
+
+```sql
+fct_producao_alimentos
 ```
 
-Ou rode por etapas:
+Métricas calculadas:
 
-```powershell
-python job.py
-cd alimento_dbt
-dbt run --profiles-dir .
-dbt test --profiles-dir .
-dbt docs generate --profiles-dir .
+- receita por kg
+- faixa de produção
+- faixa de margem
+
+---
+
+## Analytical Projection Layer
+
+Modelo analítico de projeção:
+
+```sql
+projecao_receita_alimentos
 ```
 
-Modelos gerados no SQLite:
+Cenários implementados:
 
-- `main.stg_producao_alimentos`
-- `main.fct_producao_alimentos`
-- `main.projecao_receita_alimentos`
+- crescimento de receita em 10%
+- crescimento de volume em 15%
 
-## Testes
+---
 
-```powershell
-dbt test --profiles-dir .
-```
+# Testes de Qualidade de Dados
 
-Ha testes de:
+O projeto implementa testes automatizados utilizando dbt.
+
+## Generic Tests
 
 - `not_null`
 - `unique`
 - `accepted_values`
-- quantidade positiva
-- receita projetada maior que receita atual
 
-## Documentacao
+---
 
-Gere e abra a documentacao interativa:
+## Singular Tests
 
-```powershell
+### Quantidade positiva
+
+```sql
+where quantidade_kg <= 0
+```
+
+### Receita projetada maior que receita atual
+
+```sql
+where receita_projetada_10_pct <= receita_total
+```
+
+---
+
+# DAG do Projeto
+
+```text
+raw.producao
+        ↓
+stg_producao_alimentos
+        ↓
+fct_producao_alimentos
+        ↓
+projecao_receita_alimentos
+```
+
+---
+
+# Como Executar
+
+## 1. Instalar dependências
+
+```bash
+pip install dbt-sqlite pandas
+```
+
+---
+
+## 2. Executar ETL
+
+```bash
+python job.py
+```
+
+---
+
+## 3. Executar modelos dbt
+
+```bash
+dbt run --profiles-dir .
+```
+
+---
+
+## 4. Executar testes
+
+```bash
+dbt test --profiles-dir .
+```
+
+---
+
+## 5. Executar pipeline completo
+
+```bash
+dbt build --profiles-dir .
+```
+
+---
+
+## 6. Gerar documentação
+
+```bash
 dbt docs generate --profiles-dir .
+
 dbt docs serve --profiles-dir .
 ```
 
-## Perguntas que o projeto responde
+---
 
-- Quais alimentos geram mais receita total?
-- Quais alimentos tem maior receita por kg?
-- Quais produtos estao em faixa alta, media ou baixa de producao?
-- Como ficaria a receita com crescimento de 10 por cento?
-- Como ficaria a receita se o volume produzido crescer 15 por cento?
-=======
-# pipeline_dbt
->>>>>>> 31d5692ad9c358891239a76659d394e8a7365b2c
+# Insights Gerados
+
+O projeto permite responder perguntas analíticas como:
+
+- Quais alimentos geram maior receita?
+- Qual produto possui maior receita por kg?
+- Quais produtos possuem maior margem?
+- Como seria a receita com crescimento de 10%?
+- Como seria a produção com crescimento de volume?
+
+---
+
+# Funcionalidades Implementadas
+
+- ETL com Python
+- Data Modeling
+- Data Lineage
+- Data Quality Tests
+- Analytics Engineering
+- SQL Transformations
+- Projeções Analíticas
+- Documentação Automática
+- Camadas staging/marts
+
+---
+
+# Melhorias Futuras
+
+- CI/CD com GitHub Actions
+- Incremental Models
+- Snapshots
+- Seeds
+- Testes avançados com dbt-expectations
+- Integração com Data Warehouse Cloud
+
+---
+
+# Autor
+
+## Guilherme Berti
+
+Engenheiro de Dados em formação com experiência em:
+
+- Python
+- SQL
+- Apache Spark
+- Azure
+- Databricks
+- dbt
+- Engenharia de Dados
+
+GitHub:
+https://github.com/GuilhermeBerti
