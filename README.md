@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Projeto dbt: producao de alimentos com SQLite
 
 Projeto simples de engenharia de dados usando:
@@ -142,3 +143,6 @@ dbt docs serve --profiles-dir .
 - Quais produtos estao em faixa alta, media ou baixa de producao?
 - Como ficaria a receita com crescimento de 10 por cento?
 - Como ficaria a receita se o volume produzido crescer 15 por cento?
+=======
+# pipeline_dbt
+>>>>>>> 31d5692ad9c358891239a76659d394e8a7365b2c
