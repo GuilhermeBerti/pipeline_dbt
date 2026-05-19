@@ -1,8 +1,14 @@
 target/
 dbt_packages/
 logs/
-*.pyc
+
+profiles.yml
+.user.yml
+
 __pycache__/
-.env
+*.pyc
+
 venv/
-*.db-journalprofiles.yml 
+.env
+
+.DS_Store
