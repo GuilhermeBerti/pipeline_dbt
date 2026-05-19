@@ -73,8 +73,6 @@ alimento_dbt/
 
 ## Data Lineage
 
-![Lineage Graph](images/lineage.png)
-
 O pipeline possui dependência entre modelos utilizando:
 
 - `source()`
